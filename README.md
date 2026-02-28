@@ -1,4 +1,4 @@
-[English README](README.md) | [简体中文 README](README.zh-CN.md)
+[English](README.md) | [简体中文](README.zh-CN.md)
 
 # MidiPlayer
 
