@@ -12,11 +12,25 @@
 
 ## 使用流程
 
-1. 准备好音乐文件 (`.mid`, `.nbs`)
-2. 用 [Note Block Studio](https://github.com/OpenNBS/NoteBlockStudio) 导出为数据包
-3. 使用 GUI 或者 CLI 工具导出 `songs.json`
+1. 准备好音乐文件 (`.mid`, `.nbs` 或者其他可以导入 [Note Block Studio](https://github.com/OpenNBS/NoteBlockStudio) 的文件)
+
+2. 用 [Note Block Studio](https://github.com/OpenNBS/NoteBlockStudio) 导出为数据包。
+（是的，你想给数据包的导出参数改成什么都可以）
+
+- 在 [NBS 官网](https://noteblock.studio/) 下载并安装 Note Block Studio
+
+- 左上角选择 `打开歌曲` (适用于 `.nbs` 文件) / `从 MIDI 文件导入`
+
+- 打开后，左上角选择 `导出为数据包`
+
+- 选择正确的 `Minecraft 版本`，选择 `导出`
+
+3. 使用 [GUI 工具](#gui-工具) 或者 [CLI 工具](#cli-工具)导出 `songs.json`
+
 4. 将 `songs.json` 放置在 `./config/midiplayer` 下
+
 5. 安装 midiplayer 插件。如将 `midiplayer.pyz` 拖入 `./plugins` 下
+
 6. 启动 [MCDReforged](https://github.com/Fallen-Breath/MCDReforged)，加载插件
 
 ---
@@ -70,6 +84,9 @@ GUI 提供可视化界面来生成 `songs.json` 文件。
 
 ### 启动方式
 
+若 `.pyz` 文件已被成功关联，则可双击直接启动 GUI。
+
+或者使用如下命令：
 ```bash
 python midiplayer.pyz --gui
 ```
@@ -118,23 +135,15 @@ python midiplayer.pyz songs.txt ./datapacks/ ./output
 
 ## 打包
 
-### 打包为 MCDR 插件 + 独立 CLI/GUI 工具
+打包为 `.pyz`（Python Zip Application），既可独立运行为 CLI/GUI 工具，又可作为 MCDR 插件使用。
 
-打包为 `.pyz`，既可独立运行为 CLI 和 GUI 工具，又可作为 MCDR 插件使用：
+在项目根目录（`midiplugin` 的上级目录）执行：
 
 ```bash
-cd midiplugin
-zip -r ../midiplayer.pyz __main__.py midiplayer/ lang/
+python -m zipapp midiplugin -o midiplayer.pyz
 ```
 
-使用方式：
-
-若 `.pyz` 文件已被成功关联，则可双击直接启动 GUI。
-```bash
-python midiplayer.pyz --gui          # 启动 GUI
-python midiplayer.pyz songs.txt ./datapacks/  # CLI 模式
-```
-将 `.pyz` 插件文件放入 MCDReforged 的 `plugins/` 目录即可。
+---
 
 ## 依赖
 

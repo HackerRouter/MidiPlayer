@@ -1,4 +1,4 @@
-[English](README.md) | [简体中文](README.zh-CN.md)
+English | [简体中文](README.zh-CN.md)
 
 # MidiPlayer
 
@@ -12,11 +12,25 @@ Also includes GUI and CLI tools for generating the `songs.json` configuration fi
 
 ## Workflow
 
-1. Prepare music files (`.mid`, `.nbs`)
-2. Export as datapacks using [Note Block Studio](https://github.com/OpenNBS/NoteBlockStudio)
-3. Use the GUI or CLI tool to export `songs.json`
+1. Prepare music files (`.mid`, `.nbs`, or any file importable by [Note Block Studio](https://github.com/OpenNBS/NoteBlockStudio))
+
+2. Export as datapacks using [Note Block Studio](https://github.com/OpenNBS/NoteBlockStudio).
+(Yes, you can customize the export parameters however you like)
+
+- Download and install Note Block Studio from the [NBS website](https://noteblock.studio/)
+
+- Top-left: select `Open Song` (for `.nbs` files) / `Import from MIDI`
+
+- Once opened, top-left: select `Export as Datapack`
+
+- Choose the correct `Minecraft Version`, then click `Export`
+
+3. Use the [GUI Tool](#gui-tool) or [CLI Tool](#cli-tool) to export `songs.json`
+
 4. Place `songs.json` in `./config/midiplayer`
+
 5. Install the midiplayer plugin (e.g. drag `midiplayer.pyz` into `./plugins`)
+
 6. Start [MCDReforged](https://github.com/Fallen-Breath/MCDReforged) to load the plugin
 
 ---
@@ -70,6 +84,9 @@ The GUI provides a visual interface for generating `songs.json`.
 
 ### Launch
 
+If `.pyz` files are properly associated, you can double-click to launch the GUI directly.
+
+Or use the following command:
 ```bash
 python midiplayer.pyz --gui
 ```
@@ -118,26 +135,31 @@ python midiplayer.pyz songs.txt ./datapacks/ ./output
 
 ## Building
 
-### Build as MCDR Plugin + Standalone CLI/GUI Tool
+Package as a `.pyz` (Python Zip Application), which works both as a standalone CLI/GUI tool and as an MCDR plugin.
 
-Package as a `.pyz` (Python Zip Application), which works both as a standalone CLI/GUI tool and as an MCDR plugin:
+Run from the project root (the parent directory of `midiplugin`):
 
 ```bash
-cd midiplugin
-zip -r ../midiplayer.pyz __main__.py midiplayer/ lang/
+python -m zipapp midiplugin -o midiplayer.pyz
 ```
 
-Usage:
+- `midiplugin` — source directory containing the `__main__.py` entry point
+- `-o midiplayer.pyz` — specifies the output filename
 
-If `.pyz` files are properly associated, you can double-click to launch the GUI directly.
+The generated `midiplayer.pyz` can be used as:
+
 ```bash
-python midiplayer.pyz --gui          # Launch GUI
-python midiplayer.pyz songs.txt ./datapacks/  # CLI mode
+python midiplayer.pyz --gui                          # Launch GUI
+python midiplayer.pyz songs.txt ./datapacks/         # CLI mode
 ```
-Place the `.pyz` plugin file into MCDReforged's `plugins/` directory.
+
+It can also be placed directly into MCDReforged's `plugins/` directory to load as a plugin.
+
+> If `.pyz` files are associated on your system, double-click to launch the GUI.
+
+---
 
 ## Dependencies
 
 - Python >= 3.8
 - [MCDReforged](https://github.com/Fallen-Breath/MCDReforged) >= 2.0.0-alpha.1 (only required for the in-game plugin)
-- GUI/CLI tools have no extra dependencies (Python stdlib only: `tkinter`, `zipfile`, `json`, `argparse`, etc.)
