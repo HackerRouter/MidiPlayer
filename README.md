@@ -4,7 +4,17 @@ English | [简体中文](README.zh-CN.md)
 
 An [MCDReforged](https://github.com/Fallen-Breath/MCDReforged) plugin for playing music from datapacks converted from MIDI/`.nbs` files using [Note Block Studio](https://github.com/OpenNBS/NoteBlockStudio) in Minecraft servers.
 
-Also includes GUI and CLI tools for generating the `songs.json` configuration file.
+Also a GUI/CLI tool for generating the `songs.json` configuration file the plugin needs.
+
+---
+
+## Features
+
+- In-game song request, pause, skip, queue management with four play modes: single / random / sequential / loop
+- Auto-advances to the next song
+- Admins can add, remove, or edit song info in real time from in-game
+- Auto-detects datapack function call name (link) and song duration when importing `.zip` datapacks
+- A single `.pyz` file serves as both an MCDR plugin and a standalone GUI/CLI tool to edit `songs.json`
 
 ![demo](demo.png)
 
@@ -15,7 +25,7 @@ Also includes GUI and CLI tools for generating the `songs.json` configuration fi
 1. Prepare music files (`.mid`, `.nbs`, or any file importable by [Note Block Studio](https://github.com/OpenNBS/NoteBlockStudio))
 
 2. Export as datapacks using [Note Block Studio](https://github.com/OpenNBS/NoteBlockStudio).
-(Yes, you can customize the export parameters however you like)
+(Yes, you can customize the namespace, path, and other export parameters however you like)
 
 - Download and install Note Block Studio from the [NBS website](https://noteblock.studio/)
 
@@ -43,7 +53,7 @@ Also includes GUI and CLI tools for generating the `songs.json` configuration fi
 |---------|-------------|
 | `!!mp` | Show help |
 | `!!mp list [page]` | Song list |
-| `!!mp links [page]` | Link list |
+| `!!mp links [page]` | Link (datapack function call name) list |
 | `!!mp search <keyword>` | Search songs |
 | `!!mp play [keyword/index]` | Play a song |
 | `!!mp pause` | Pause |
@@ -68,7 +78,7 @@ Also includes GUI and CLI tools for generating the `songs.json` configuration fi
 | `!!mpa copy <index>` | Copy song |
 | `!!mpa set <index> name <name>` | Edit name |
 | `!!mpa set <index> artist <artists>` | Edit artist |
-| `!!mpa set <index> link <link>` | Edit link |
+| `!!mpa set <index> link <link>` | Edit link (datapack function call name) |
 | `!!mpa set <index> duration <seconds>` | Edit duration |
 | `!!mpa info [page]` | Song details list |
 | `!!mpa debug [player]` | Debug info |
@@ -110,7 +120,7 @@ Command-line mode for batch generating `songs.json`.
 ### Usage
 
 ```bash
-python midiplayer.pyz <song-artist-file> <datapack-id-file-or-directory> [output-path]
+python midiplayer.pyz <song-artist-file> <datapack-id-file-or-directory> [output-path] [-d duration-file]
 ```
 
 ### Arguments
@@ -120,6 +130,7 @@ python midiplayer.pyz <song-artist-file> <datapack-id-file-or-directory> [output
 | `song-artist-file` | Text file with `Song Name - Artist` per line |
 | `datapack-id-file-or-directory` | Text file with one datapack ID per line, or a directory containing `.zip` datapacks |
 | `output-path` (optional) | Output directory for JSON, defaults to current directory |
+| `-d`/`--duration` (optional) | Text file with one duration (seconds) per line, matching songs line by line |
 
 ### Examples
 
@@ -129,6 +140,9 @@ python midiplayer.pyz songs.txt datapacks.txt ./output
 
 # Using a datapack directory (auto-detects links and durations from zips)
 python midiplayer.pyz songs.txt ./datapacks/ ./output
+
+# Using text files + manually specified durations
+python midiplayer.pyz songs.txt datapacks.txt ./output -d durations.txt
 ```
 
 ---
@@ -137,7 +151,7 @@ python midiplayer.pyz songs.txt ./datapacks/ ./output
 
 Package as a `.pyz` (Python Zip Application), which works both as a standalone CLI/GUI tool and as an MCDR plugin.
 
-Run from the project root (the parent directory of `midiplugin`):
+Run from the parent directory of `midiplugin`:
 
 ```bash
 python -m zipapp midiplugin -o midiplayer.pyz
@@ -146,16 +160,6 @@ python -m zipapp midiplugin -o midiplayer.pyz
 - `midiplugin` — source directory containing the `__main__.py` entry point
 - `-o midiplayer.pyz` — specifies the output filename
 
-The generated `midiplayer.pyz` can be used as:
-
-```bash
-python midiplayer.pyz --gui                          # Launch GUI
-python midiplayer.pyz songs.txt ./datapacks/         # CLI mode
-```
-
-It can also be placed directly into MCDReforged's `plugins/` directory to load as a plugin.
-
-> If `.pyz` files are associated on your system, double-click to launch the GUI.
 
 ---
 

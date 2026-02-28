@@ -4,7 +4,17 @@
 
 一个 [MCDReforged](https://github.com/Fallen-Breath/MCDReforged) 插件，用于在 Minecraft 服务器中播放由 [Note Block Studio](https://github.com/OpenNBS/NoteBlockStudio) 转换 MIDI 文件/`.nbs`文件 得到的数据包音乐。
 
-同时提供 GUI 和 CLI 工具，用于生成 `songs.json` 配置文件。
+也是一个用于生成插件所需 `songs.json` 配置文件的 GUI/CLI 工具。
+
+---
+
+## 插件特色
+
+- 游戏内点歌、暂停、切歌、队列管理，支持单曲/随机/顺序/循环四种播放模式
+- 自动播放下一首歌
+- 管理员可在游戏内实时增删改歌曲信息
+- 导入 `.zip` 数据包时自动解析 数据包调用名称（link）和歌曲时长
+- 同一个 `.pyz` 文件既是 MCDR 插件，也是独立的 GUI/CLI 编辑 `songs.json` 工具
 
 ![demo](demo.png)
 
@@ -15,7 +25,7 @@
 1. 准备好音乐文件 (`.mid`, `.nbs` 或者其他可以导入 [Note Block Studio](https://github.com/OpenNBS/NoteBlockStudio) 的文件)
 
 2. 用 [Note Block Studio](https://github.com/OpenNBS/NoteBlockStudio) 导出为数据包。
-（是的，你想给数据包的导出参数改成什么都可以）
+（是的，你想给数据包的命名空间、路径导出参数改成什么都可以）
 
 - 在 [NBS 官网](https://noteblock.studio/) 下载并安装 Note Block Studio
 
@@ -43,7 +53,7 @@
 |------|------|
 | `!!mp` | 显示帮助 |
 | `!!mp list [页码]` | 歌曲列表 |
-| `!!mp links [页码]` | 链接列表 |
+| `!!mp links [页码]` | 链接（数据包调用名称）列表 |
 | `!!mp search <关键词>` | 搜索歌曲 |
 | `!!mp play [关键词/序号]` | 播放歌曲 |
 | `!!mp pause` | 暂停 |
@@ -68,7 +78,7 @@
 | `!!mpa copy <序号>` | 复制歌曲 |
 | `!!mpa set <序号> name <歌名>` | 编辑歌名 |
 | `!!mpa set <序号> artist <艺术家>` | 编辑艺术家 |
-| `!!mpa set <序号> link <链接>` | 编辑链接 |
+| `!!mpa set <序号> link <链接>` | 编辑链接（数据包调用名称） |
 | `!!mpa set <序号> duration <秒数>` | 编辑时长 |
 | `!!mpa info [页码]` | 歌曲详情列表 |
 | `!!mpa debug [玩家名]` | 调试信息 |
@@ -110,7 +120,7 @@ python midiplayer.pyz --gui
 ### 用法
 
 ```bash
-python midiplayer.pyz <歌曲-艺术家文本文件> <数据包ID文本文件/数据包目录> [输出路径]
+python midiplayer.pyz <歌曲-艺术家文本文件> <数据包ID文本文件/数据包目录> [输出路径] [-d 时长文本文件]
 ```
 
 ### 参数说明
@@ -120,6 +130,7 @@ python midiplayer.pyz <歌曲-艺术家文本文件> <数据包ID文本文件/�
 | `歌曲-艺术家文本文件` | 每行格式为 `歌名 - 艺术家` 的文本文件 |
 | `数据包ID文本文件/数据包目录` | 每行一个数据包 ID 的文本文件，或包含 `.zip` 数据包的目录 |
 | `输出路径`（可选） | JSON 输出目录，默认为当前目录 |
+| `-d`/`--duration`（可选） | 每行一个时长（秒）的文本文件，逐行对应歌曲 |
 
 ### 示例
 
@@ -127,21 +138,28 @@ python midiplayer.pyz <歌曲-艺术家文本文件> <数据包ID文本文件/�
 # 使用文本文件
 python midiplayer.pyz songs.txt datapacks.txt ./output
 
-# 使用数据包目录（自动从 zip 解析链接和时长）
+# 使用数据包目录（自动从 zip 解析 link 和歌曲时长）
 python midiplayer.pyz songs.txt ./datapacks/ ./output
+
+# 使用文本文件 + 手动指定时长
+python midiplayer.pyz songs.txt datapacks.txt ./output -d durations.txt
 ```
 
 ---
 
 ## 打包
 
-打包为 `.pyz`（Python Zip Application），既可独立运行为 CLI/GUI 工具，又可作为 MCDR 插件使用。
+打包为 `.pyz`，既可独立运行为 CLI/GUI 工具，又可作为 MCDR 插件使用。
 
-在项目根目录（`midiplugin` 的上级目录）执行：
+在 `midiplugin` 的上级目录执行：
 
 ```bash
 python -m zipapp midiplugin -o midiplayer.pyz
 ```
+
+- `midiplugin` — 源目录，包含 `__main__.py` 入口文件
+- `-o midiplayer.pyz` — 指定输出文件名
+
 
 ---
 

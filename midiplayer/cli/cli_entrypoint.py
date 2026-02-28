@@ -44,10 +44,29 @@ class CliEntrypoint:
             print(tr("file_not_exist"))
             return "", {}
 
-    def export_songs_json(self, song_artist_file, datapack_id_file, output_path):
+    def cli_import_duration_file(self, file_path, datapack_lines):
+        """Read a duration text file (one duration per line) and map to datapack IDs."""
+        durations = {}
+        with open(file_path, "r", encoding="utf-8") as f:
+            for i, line in enumerate(f):
+                line = line.strip()
+                if not line or i >= len(datapack_lines):
+                    continue
+                try:
+                    dur = float(line)
+                    durations[datapack_lines[i].lower()] = dur
+                except ValueError:
+                    pass
+        return durations
+
+    def export_songs_json(self, song_artist_file, datapack_id_file, output_path, duration_file=None):
         song_lines = self.cli_import_song_file(song_artist_file).strip().split("\n")
         id_text, durations = self.cli_import_datapack_id_file(datapack_id_file)
         datapack_lines = id_text.strip().split("\n")
+
+        if duration_file:
+            file_durations = self.cli_import_duration_file(duration_file, datapack_lines)
+            durations.update(file_durations)
 
         parsed, _ = parse_songs(song_lines, datapack_lines, durations)
 
@@ -68,6 +87,8 @@ class CliEntrypoint:
             help=tr("datapack_id_file_path_help"))
         parser.add_argument('output_path', type=str, nargs='?',
             default=os.getcwd(), help=tr("output_path_help"))
+        parser.add_argument('--duration', '-d', type=str, default=None,
+            help=tr("duration_file_help"))
         parser.add_argument('--gui', action='store_true', help=tr("--gui_help"))
 
         args_parsed_successfully = False
@@ -102,7 +123,9 @@ class CliEntrypoint:
             print(tr("song_artist_file_path") + args.song_artist_file_path)
             print(tr("datapack_id_file_path") + args.datapack_id_file_path)
             print(tr("output_path") + args.output_path)
-            self.export_songs_json(args.song_artist_file_path, args.datapack_id_file_path, args.output_path)
+            if args.duration:
+                print(tr("duration_file_path") + args.duration)
+            self.export_songs_json(args.song_artist_file_path, args.datapack_id_file_path, args.output_path, args.duration)
         else:
             print(tr("correct_format_example"))
             response = input(tr("ask_gui_launch")).strip().lower()
