@@ -6,7 +6,7 @@
 
 同时提供 GUI 和 CLI 工具，用于生成 `songs.json` 配置文件。
 
-[demo](demo.png)
+![demo](demo.png)
 
 ---
 

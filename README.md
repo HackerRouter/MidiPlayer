@@ -6,7 +6,7 @@ An [MCDReforged](https://github.com/Fallen-Breath/MCDReforged) plugin for playin
 
 Also includes GUI and CLI tools for generating the `songs.json` configuration file.
 
-[demo](demo.png)
+![demo](demo.png)
 
 ---
 
