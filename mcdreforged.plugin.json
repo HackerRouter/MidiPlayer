@@ -2,7 +2,7 @@
     "id": "midiplayer",
     "version": "1.1.0",
     "name": "Midi Player",
-    "description": "Play music in datapacks generated with midi files.",
+    "description": "Play music of datapacks generated with midi files.",
     "author": "HackerRouter",
     "link": "https://github.com/HackerRouter/midiplayer",
     "dependencies": {

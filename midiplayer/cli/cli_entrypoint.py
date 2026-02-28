@@ -3,7 +3,7 @@ import json
 import os
 import sys
 
-from midiplayer.song_parser import tr, parse_songs # type: ignore
+from midiplayer.song_parser import tr, parse_songs, extract_link_from_zip # type: ignore
 from midiplayer.duration import extract_duration_from_zip # type: ignore
 
 
@@ -26,13 +26,19 @@ class CliEntrypoint:
             for filename in os.listdir(file_path):
                 full_path = os.path.join(file_path, filename)
                 if os.path.isfile(full_path):
-                    name_no_ext = os.path.splitext(filename)[0]
-                    formatted = name_no_ext.replace(" ", "_").lower()
-                    datapack_ids.append(formatted)
                     if filename.endswith('.zip'):
+                        link = extract_link_from_zip(full_path)
+                        if link is None:
+                            name_no_ext = os.path.splitext(filename)[0]
+                            link = name_no_ext.replace(" ", "_").lower()
+                        datapack_ids.append(link)
                         dur = extract_duration_from_zip(full_path)
                         if dur is not None:
-                            durations[formatted] = dur
+                            durations[link.lower()] = dur
+                    else:
+                        name_no_ext = os.path.splitext(filename)[0]
+                        formatted = name_no_ext.replace(" ", "_").lower()
+                        datapack_ids.append(formatted)
             return "\n".join(datapack_ids), durations
         else:
             print(tr("file_not_exist"))

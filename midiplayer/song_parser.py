@@ -2,6 +2,7 @@
 import json
 import locale
 import pkgutil
+import zipfile
 
 _lang_data = None
 
@@ -23,6 +24,40 @@ def load_lang():
 
 def tr(key: str) -> str:
     return load_lang().get(key, key)
+
+
+def extract_link_from_zip(zip_path):
+    """Extract the function link prefix from a datapack zip.
+    
+    Looks for play.mcfunction inside the zip and derives the link
+    from the directory structure: data/<ns>/functions/<path>/play.mcfunction
+    -> link = "ns:path" (if path exists) or "ns" (if no path).
+    
+    The link is used as: /function {link}/play or /function {link}:play
+    """
+    try:
+        with zipfile.ZipFile(zip_path, 'r') as zf:
+            for name in zf.namelist():
+                # Find play.mcfunction
+                if name.endswith('/play.mcfunction') and '/functions/' in name:
+                    # e.g. "data/ns/functions/path/name/play.mcfunction"
+                    # Split on "data/" and "functions/"
+                    parts = name.split('/')
+                    try:
+                        data_idx = parts.index('data')
+                        func_idx = parts.index('functions')
+                    except ValueError:
+                        continue
+                    ns = '/'.join(parts[data_idx + 1:func_idx])
+                    # path is everything between functions/ and play.mcfunction
+                    path_parts = parts[func_idx + 1:-1]  # exclude "play.mcfunction"
+                    if path_parts:
+                        return f"{ns}:{'/'.join(path_parts)}"
+                    else:
+                        return ns
+    except Exception:
+        pass
+    return None
 
 
 def parse_songs(song_lines, datapack_lines, durations=None):

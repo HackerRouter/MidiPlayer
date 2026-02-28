@@ -8,7 +8,7 @@ from mcdreforged.api.command import SimpleCommandBuilder, Integer, Text
 from midiplayer import helpers
 from midiplayer.helpers import (
     Config, tr, _ensure_songs_file, _load_songs, _load_queue,
-    _send_help, _info_text,
+    _send_help, _info_text, _func_cmd,
     player_current_song, player_play_mode, player_auto_next_timer,
     player_pages, player_pages_queue, PLAY_MODES,
 )
@@ -47,7 +47,7 @@ def _start_auto_next(server, player, duration, songs, _msgs=None):
 
     def _next_song(song, current):
         if current:
-            server.execute(f'execute as {player} run function {current}:stop')
+            server.execute(f'execute as {player} run function {_func_cmd(current, "stop")}')
         try:
             msg = tpl_auto_next.format(song['name'])
         except (IndexError, KeyError):

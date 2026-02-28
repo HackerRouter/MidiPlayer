@@ -7,7 +7,7 @@ from midiplayer.helpers import (
     tr, _load_songs, _save_songs, _load_queue, _save_queue, _has_queue,
     _fmt_duration, _info_text, _err_text, _song_text,
     _get_page, _show_song_page, _show_queue_page, _show_search_results,
-    _find_song, _parse_multi_index, _send_help, _page_nav,
+    _find_song, _parse_multi_index, _send_help, _page_nav, _func_cmd,
     player_pages, player_pages_queue, player_current_song, player_play_mode,
     player_paused, player_auto_next_timer, PLAY_MODES,
 )
@@ -46,7 +46,7 @@ def _show_now_playing(source, songs, queue, current_idx):
 def _play_song_and_timer(server, player, song, songs, _msgs=None):
     """Play a song and start auto-next timer if duration available."""
     from midiplayer.midiplayer import _start_auto_next
-    server.execute(f'execute as {player} run function {song["link"]}:play')
+    server.execute(f'execute as {player} run function {_func_cmd(song["link"], "play")}')
     player_current_song[player] = song['link']
     player_paused[player] = False
     dur = song.get('duration')
@@ -154,7 +154,7 @@ def cmd_play(source: CommandSource, context=None):
             if song:
                 _play_song_and_timer(server, player, song, songs)
             else:
-                server.execute(f'execute as {player} run function {current}:play')
+                server.execute(f'execute as {player} run function {_func_cmd(current, "play")}')
         else:
             queue = _load_queue(player)
             if queue:
@@ -183,7 +183,7 @@ def cmd_play(source: CommandSource, context=None):
         queue.append(song['link'])
         _save_queue(player, queue)
     if player in player_current_song:
-        server.execute(f'execute as {player} run function {player_current_song[player]}:stop')
+        server.execute(f'execute as {player} run function {_func_cmd(player_current_song[player], "stop")}')
     source.reply(RTextList(
         _info_text(str(tr('msg.found_song', song['name'], ', '.join(song['artist'])))),
     ))
@@ -203,7 +203,7 @@ def cmd_stop(source: CommandSource):
         return
     current = player_current_song.get(player)
     if current:
-        server.execute(f'execute as {player} run function {current}:pause')
+        server.execute(f'execute as {player} run function {_func_cmd(current, "pause")}')
         player_paused[player] = True
         songs = _load_songs()
         song = next((s for s in songs if s['link'] == current), None)
@@ -223,7 +223,7 @@ def cmd_resume(source: CommandSource):
         return
     current = player_current_song.get(player)
     if current:
-        server.execute(f'execute as {player} run function {current}:play')
+        server.execute(f'execute as {player} run function {_func_cmd(current, "play")}')
         player_paused[player] = False
         songs = _load_songs()
         song = next((s for s in songs if s['link'] == current), None)
@@ -308,7 +308,7 @@ def cmd_next(source: CommandSource):
         return
     current = player_current_song.get(player)
     if current:
-        server.execute(f'execute as {player} run function {current}:stop')
+        server.execute(f'execute as {player} run function {_func_cmd(current, "stop")}')
 
     mode = player_play_mode.get(player, 'sequential')
     if mode == 'random':
@@ -331,7 +331,7 @@ def cmd_next(source: CommandSource):
         _show_now_playing(source, songs, queue, idx)
     else:
         player_current_song[player] = link
-        server.execute(f'execute as {player} run function {link}:play')
+        server.execute(f'execute as {player} run function {_func_cmd(link, "play")}')
 
 
 def cmd_prev(source: CommandSource):
@@ -351,7 +351,7 @@ def cmd_prev(source: CommandSource):
         return
     current = player_current_song.get(player)
     if current:
-        server.execute(f'execute as {player} run function {current}:stop')
+        server.execute(f'execute as {player} run function {_func_cmd(current, "stop")}')
 
     mode = player_play_mode.get(player, 'sequential')
     if mode == 'random':
@@ -373,7 +373,7 @@ def cmd_prev(source: CommandSource):
         _show_now_playing(source, songs, queue, idx)
     else:
         player_current_song[player] = link
-        server.execute(f'execute as {player} run function {link}:play')
+        server.execute(f'execute as {player} run function {_func_cmd(link, "play")}')
 
 
 def cmd_shuffle(source: CommandSource):
@@ -529,7 +529,7 @@ def cmd_clear(source: CommandSource):
     _cancel_auto_next(player)
     current = player_current_song.get(player)
     if current:
-        server.execute(f'execute as {player} run function {current}:stop')
+        server.execute(f'execute as {player} run function {_func_cmd(current, "stop")}')
     _save_queue(player, [])
     player_current_song.pop(player, None)
     source.reply(_info_text(str(tr('msg.queue_cleared'))))

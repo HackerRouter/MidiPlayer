@@ -7,7 +7,7 @@ import os
 import sys
 
 from midiplayer.duration import extract_duration_from_zip # type: ignore
-from midiplayer.song_parser import tr, parse_songs # type: ignore
+from midiplayer.song_parser import tr, parse_songs, extract_link_from_zip # type: ignore
 
 
 __all__ = ['gui_entry']
@@ -124,12 +124,18 @@ class WinGUI(Tk):
             for file_path in file_paths:
                 file_name = os.path.basename(file_path)
                 name_no_ext = os.path.splitext(file_name)[0]
-                formatted = name_no_ext.replace(" ", "_")
-                self.input_datapack_id.insert(END, formatted + "\n")
                 if file_name.endswith('.zip'):
+                    # Extract real link from zip structure
+                    link = extract_link_from_zip(file_path)
+                    if link is None:
+                        link = name_no_ext.replace(" ", "_")
+                    self.input_datapack_id.insert(END, link + "\n")
                     dur = extract_duration_from_zip(file_path)
                     if dur is not None:
-                        self.durations[formatted.lower()] = dur
+                        self.durations[link.lower()] = dur
+                else:
+                    formatted = name_no_ext.replace(" ", "_")
+                    self.input_datapack_id.insert(END, formatted + "\n")
             self.refresh_json_preview()
 
     def parse_text(self, event=None):

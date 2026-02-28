@@ -26,6 +26,17 @@ def tr(key, *args):
     return ServerInterface.psi().tr(f'midiplayer.{key}', *args)
 
 
+def _func_cmd(link, action):
+    """Build a MC function call string from a link and action.
+    
+    If link contains ':', it's already ns:path format -> ns:path/action
+    Otherwise it's just a namespace -> ns:action
+    """
+    if ':' in link:
+        return f'{link}/{action}'
+    return f'{link}:{action}'
+
+
 # ── data helpers ──
 
 def _ensure_songs_file():
