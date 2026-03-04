@@ -1,0 +1,9 @@
+testdatapacks
+test1gui
+test2
+build.bat
+temp_build
+midiplayer.pyz
+lang/__pycache__
+midiplayer/__pycache__
+midiplayer/cli/__pycache__

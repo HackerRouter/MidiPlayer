@@ -120,7 +120,11 @@ Command-line mode for batch generating `songs.json`.
 ### Usage
 
 ```bash
+# Standard mode: Generate songs.json
 python midiplayer.pyz <song-artist-file> <datapack-id-file-or-directory> [output-path] [-d duration-file]
+
+# Template generation mode: Generate song-artist template from datapack folder
+python midiplayer.pyz -g <datapack-directory> [output-path]
 ```
 
 ### Arguments
@@ -131,6 +135,7 @@ python midiplayer.pyz <song-artist-file> <datapack-id-file-or-directory> [output
 | `datapack-id-file-or-directory` | Text file with one datapack ID per line, or a directory containing `.zip` datapacks |
 | `output-path` (optional) | Output directory for JSON, defaults to current directory |
 | `-d`/`--duration` (optional) | Text file with one duration (seconds) per line, matching songs line by line |
+| `-g`/`--generate-template` (optional) | Generate a song-artist template file from datapack folder |
 
 ### Examples
 
@@ -143,6 +148,11 @@ python midiplayer.pyz songs.txt ./datapacks/ ./output
 
 # Using text files + manually specified durations
 python midiplayer.pyz songs.txt datapacks.txt ./output -d durations.txt
+
+# Generate template file (auto-extracts links from datapack folder)
+python midiplayer.pyz -g ./datapacks/ ./output
+# This creates song_template.txt with each line as "link - anonymous"
+# Edit the template file, then use standard mode to generate songs.json
 ```
 
 ---
