@@ -11,6 +11,7 @@ Also a GUI/CLI tool for generating the `songs.json` configuration file the plugi
 ## Features
 
 - In-game song request, pause, skip, queue management with four play modes: single / random / sequential / loop
+- Search and match by song name, artist, or song list index — play or add to queue without typing the full name
 - Auto-advances to the next song
 - Admins can add, remove, or edit song info in real time from in-game
 - Auto-detects datapack function call name (link) and song duration when importing `.zip` datapacks
